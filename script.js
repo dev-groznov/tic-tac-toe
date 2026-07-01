@@ -75,7 +75,7 @@ const gameboard = (() => {
 
 const ScreenController = (() => {
     const gameState = gameboard.getGameState();
-    const comment = document.querySelector(".turn");
+    const comment = document.querySelector(".comment");
     const boardDiv = document.querySelector(".board");
 
     const updateComment = (text) => {
@@ -97,10 +97,15 @@ const ScreenController = (() => {
                 const cellButton = document.createElement("button");
                 cellButton.classList.add("cell");
 
-                cellButton.textContent = gameState[i][j];
-                boardDiv.appendChild(cellButton);
+                if (gameState[i][j] === "X") {
+                    cellButton.classList.add("cross");
+                } else if (gameState[i][j] === "0") {
+                    cellButton.classList.add("zero");
+                }
 
                 cellButton.addEventListener('click', () => clickHandlerCell(i, j));
+
+                boardDiv.appendChild(cellButton);
             }
         }
     }

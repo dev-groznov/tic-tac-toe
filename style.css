@@ -1,0 +1,88 @@
+/*
+    Josh's Custom CSS Reset
+    https://www.joshwcomeau.com/css/custom-css-reset/
+
+*/
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+*:not(dialog) {
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+      interpolate-size: allow-keywords;
+    }
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+p, h1, p, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+p {
+    text-wrap: pretty;
+}
+h1, p, h3, h4, h5, h6 {
+    text-wrap: balance;
+}
+
+#root, #__next {
+    isolation: isolate;
+}
+
+/* code */
+
+:root {
+    background-color: #f4f4f6;
+    font-family: 'Roboto', sans-serif;
+}
+
+button {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.comment {
+    font-weight: 700px;
+    font-size: calc(10px + 2vw);
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(50px, 10vw));
+    grid-template-rows: repeat(3, minmax(50px, 10vw));
+}
+
+.cross {
+    background-image: url(photos/cross.jpg);
+    background-size: contain;
+}
+
+.zero {
+    background-image: url(photos/zero.jpg);
+    background-size: contain;
+}
