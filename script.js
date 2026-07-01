@@ -1,31 +1,18 @@
 const gameboard = (() => {
-    let lastChange = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']];
+    let gameState = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']];
     let moveCount = 0;
-    let currentTurn;
 
-    function switchCurrentTurn() {
-        currentTurn = (moveCount % 2 === 0) ? 'X' : '0';
-    }
-
-    function getGameboard() {
-        for (let i = 0; i < 3; i++) {
-            let row = '';
-            for (let j = 0; j < 3; j++) {
-                row += '|';
-                row += lastChange[i][j];
-            }
-            row += '|';
-            console.log(row);
-        }
-    }
-
+    const getGameState = () => gameState
+    
+    const getCurrentTurn = () => (moveCount % 2 === 0) ? 'X' : '0';
+    
     function isCellEmpty(x, y) {
-        return (lastChange[x][y] === ' ') ? true : false;
+        return (gameState[x][y] === ' ') ? true : false;
     }
 
     function isRowsWin() {
         for (let i = 0; i < 3; i++) {
-            if ((lastChange[i][0] != " ") && (lastChange[i][0] === lastChange[i][1]) && (lastChange[i][0] === lastChange[i][2])) {
+            if ((gameState[i][0] != " ") && (gameState[i][0] === gameState[i][1]) && (gameState[i][0] === gameState[i][2])) {
                 return true;
             }
         }
@@ -34,7 +21,7 @@ const gameboard = (() => {
 
     function isColumnsWin() {
         for (let i = 0; i < 3; i++) {
-            if ((lastChange[0][i] != " ") && (lastChange[0][i] === lastChange[1][i]) && (lastChange[0][i] === lastChange[2][i])) {
+            if ((gameState[0][i] != " ") && (gameState[0][i] === gameState[1][i]) && (gameState[0][i] === gameState[2][i])) {
                 return true;
             }
         }
@@ -42,10 +29,10 @@ const gameboard = (() => {
     }
 
     function isDiagonalsWin() {
-        if ((lastChange[0][0] != " ") && (lastChange[0][0] === lastChange[1][1]) && (lastChange[0][0] === lastChange[2][2])) {
+        if ((gameState[0][0] != " ") && (gameState[0][0] === gameState[1][1]) && (gameState[0][0] === gameState[2][2])) {
             return true;
         }
-        if ((lastChange[0][2] != " ") && (lastChange[0][2] === lastChange[1][1]) && (lastChange[0][2] === lastChange[2][0])) {
+        if ((gameState[0][2] != " ") && (gameState[0][2] === gameState[1][1]) && (gameState[0][2] === gameState[2][0])) {
             return true;
         }
         return false;
@@ -58,7 +45,7 @@ const gameboard = (() => {
     function isDraw() {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                if (lastChange[i][j] === " ") {
+                if (gameState[i][j] === " ") {
                     return false
                 }
             }
@@ -67,25 +54,63 @@ const gameboard = (() => {
     }
 
     const move = (x, y) => {
-        switchCurrentTurn();
-
         if (isCellEmpty(x, y)) {
-            lastChange[x][y] = currentTurn;
+            gameState[x][y] = getCurrentTurn();
+            moveCount += 1;
 
             if (isWin()) {
-                console.log("Won ", (moveCount % 2 === 0) ? "X!" : "0!")
+                return "Won " + ((moveCount % 2 === 1) ? "X!" : "0!")
+            } else if (isDraw() && !isWin()) {
+                return "Draw!"
+            } else {
+                return ""
             }
-            if (isDraw()) {
-                console.log("Draw!")
-            }
-
-            moveCount += 1;
         } else {
-            console.log("This cell is occupied")
+            return "This cell is occupied! "
         }
-
-        return getGameboard();
     }
 
-    return { move };
+    return { getGameState , getCurrentTurn , move };
+})();
+
+const ScreenController = (() => {
+    const gameState = gameboard.getGameState();
+    const comment = document.querySelector(".turn");
+    const boardDiv = document.querySelector(".board");
+
+    const updateComment = (text) => {
+        if (comment.textContent !== "Draw!" && !comment.textContent.includes("Won")) {
+            if (text === "Draw!" || text.includes("Won")) {
+                comment.textContent = text
+            }
+            else {
+                comment.textContent = text + gameboard.getCurrentTurn() + "'s turn";
+            }
+        }
+    }
+
+    const updateBoard = () => {
+        boardDiv.textContent = "";
+        
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cellButton = document.createElement("button");
+                cellButton.classList.add("cell");
+
+                cellButton.textContent = gameState[i][j];
+                boardDiv.appendChild(cellButton);
+
+                cellButton.addEventListener('click', () => clickHandlerCell(i, j));
+            }
+        }
+    }
+
+    function clickHandlerCell(x, y) {
+        round = gameboard.move(x, y);
+        updateComment(round);
+        updateBoard();
+    }
+
+    updateComment("");
+    updateBoard();
 })();
